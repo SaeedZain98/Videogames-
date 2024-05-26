@@ -1,0 +1,67 @@
+-- the top 5 video games ordered by ranking assending 
+select Name,
+Global_Sales
+from `rugged-courier-418011.Videgames.sales_data` 
+order by Rank 
+limit 5
+-- the top 5 publisher with higher sum of global sales 
+select
+Publisher,
+sum(Global_Sales) as sum_of_global_sales
+from `rugged-courier-418011.Videgames.sales_data` 
+group by Publisher
+order by sum_of_global_sales desc 
+limit 5
+-- the top 5 platform with largest number of games 
+select
+Platform,
+count(*) as num_of_games
+from `rugged-courier-418011.Videgames.sales_data` 
+group by Platform 
+order by num_of_games desc 
+limit 5 
+the top 5 Genre that have high average sales in_Europe 
+select
+Genre,
+avg(EU_Sales) as average_Eu_sales 
+from `rugged-courier-418011.Videgames.sales_data` 
+group by Genre 
+order by average_Eu_sales desc
+limit 5
+the top 5 year with high number of games released 
+select
+Year,
+count(*) as num_of_games 
+from `rugged-courier-418011.Videgames.sales_data` 
+group by Year 
+order by num_of_games desc 
+limit 5
+-- the sum_of sales in NA , EU and JP in the top 5 year with higher number of games 
+select
+Year,
+sum(NA_Sales) as sum_of_NA_sales,
+sum(EU_Sales) as sum_of_EU_sales,
+sum(JP_Sales) as sum_of_JP_sales 
+from `rugged-courier-418011.Videgames.sales_data` 
+where Year in ('2007','2008','2009','2010','2011')
+group by Year 
+order by Year 
+-- the avergae persentage sales for NA,EU,JP, and other group by year from 2007 to 2011 
+with percentage_table as (
+  select*,
+  (NA_Sales/Global_Sales)*100 as NA_persentage,
+  (EU_Sales/Global_Sales)*100 as Eu_persentage,
+  (JP_Sales/Global_Sales)*100 as JP_persentage,
+  (Other_Sales/Global_Sales)*100 as other_persentage 
+  from `rugged-courier-418011.Videgames.sales_data` 
+)
+select 
+Year,
+avg(NA_persentage) as avg_NA_persentage,
+avg(Eu_persentage) as avg_Eu_persentage,
+avg(JP_persentage) as avg_JP_persentage,
+avg(other_persentage) as avg_other_persentage
+from percentage_table
+where Year between '2007' and '2011'
+group by Year
+order by Year 
